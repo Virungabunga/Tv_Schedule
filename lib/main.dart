@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const MyApp());
@@ -97,8 +98,11 @@ class DataHandler {
 
   String timeConverter(String timestamp) {
     var aStr = timestamp.replaceAll(new RegExp(r'[^0-9]'), '');
-    int aInt = int.parse(aStr);
-    final time = DateTime.fromMicrosecondsSinceEpoch(aInt, isUtc: true);
-    return time.toString();
+    int aIntMille = int.parse(aStr);
+
+    final time = DateTime.fromMillisecondsSinceEpoch(aIntMille, isUtc: true);
+    String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(time);
+
+    return formattedDate;
   }
 }
