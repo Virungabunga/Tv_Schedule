@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +26,9 @@ class TVSchedule extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff508991),
         appBar: AppBar(
+          backgroundColor: Color(0xff508991),
           title: const Text("Tv Schedule"),
         ),
         body: const Center(child: ScheduleList()));
@@ -40,7 +44,7 @@ class ScheduleList extends StatefulWidget {
 
 class _ScheduleListState extends State<ScheduleList> {
   DateTime time = DateTime(2017, 9, 7, 17, 30);
-  List<dynamic> scheduleList = [];
+  List<dynamic>? scheduleList = [];
   var dataHandler = DataHandler();
 
   @override
@@ -61,21 +65,26 @@ class _ScheduleListState extends State<ScheduleList> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: scheduleList.length,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          leading: Image.network(scheduleList[index]["imageurltemplate"]),
-          title: Text(scheduleList[index]["title"]),
-          trailing: Text(
-              dataHandler.timeConverter(scheduleList[index]["starttimeutc"])),
-        );
-      },
-    );
+        itemCount: scheduleList?.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            color: Color(0xff004346),
+            margin: EdgeInsets.all(5),
+
+             child: ListTile( 
+              textColor: Color(0xff09BC8A), 
+            leading: Image.network(scheduleList?[index]["imageurltemplate"] ?? "https://cdn.lospec.com/gallery/lost-965723.png"
+              ),
+            title: Text(scheduleList?[index]["title"] ?? "Missing info"),
+            trailing: Text(dataHandler.timeConverter(
+                scheduleList?[index]["starttimeutc"] ?? "missing time")),
+          )
+          );
+        });
   }
 }
 
 class DataHandler {
-  List scheduleList = [];
   final dio = Dio();
   String url = "";
   DataHandler() {
@@ -84,16 +93,33 @@ class DataHandler {
   }
 
   Future<List<dynamic>?> getData() async {
+    List<dynamic> scheduleData = [];
     try {
       Response response;
       response = await dio.get(url);
-
       Map<String, dynamic> data = response.data;
+      var pagination = data["pagination"];
+      int totalpages = pagination["totalpages"];
+      scheduleData.addAll(data["schedule"]);
+      for (var i = 1; i <= totalpages; i++) {
+        String nextpage = pagination["nextpage"];
+        if (nextpage == null) {
+          break;
+        }
 
-      return scheduleList = data["schedule"];
+        response = await dio.get(nextpage);
+        data = response.data;
+
+        scheduleData.addAll(data["schedule"]);
+        pagination = data["pagination"];
+        
+      }
     } catch (e) {
       print(e);
     }
+    print(scheduleData.toString());
+  
+    return scheduleData;
   }
 
   String timeConverter(String timestamp) {
