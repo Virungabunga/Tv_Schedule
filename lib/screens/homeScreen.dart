@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
 
 class HomePage extends StatelessWidget {
@@ -11,7 +12,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Color(0xff172A3A),
         title: const Text("Radio Schedule"),
       ),
-      body: Center(
+      body: const Center(
         child: aniW(),
       ),
       floatingActionButton: FloatingActionButton.small(onPressed: () {

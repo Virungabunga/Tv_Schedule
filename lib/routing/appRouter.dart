@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tv_schedule/main.dart';
 import 'package:tv_schedule/routing/appRoutes.dart';
-import 'package:tv_schedule/screens/homeScreen.dart';
+import 'package:tv_schedule/screens/channel_screen.dart';
 import 'package:tv_schedule/screens/channels.dart';
+import 'package:tv_schedule/screens/homeScreen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GoRouter router =
